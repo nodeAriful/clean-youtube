@@ -1,9 +1,12 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useEffect } from "react"
+import getPlaylist from "./api"
+
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  useEffect(()=>{
+    getPlaylist('PL_XxuZqN0xVBPhR5bjBIKyBjTo8pK99gN').then((res)=> console.log(res))
+  },[])
 
   return (
    <div>
