@@ -1,67 +1,45 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import getPlaylist from "../api";
 
 const usePlaylists = () => {
   const [state, setState] = useState({
     playlists: {},
     recentPlaylists: [],
-    favourites: [],
+    favorites: [],
   });
 
-  const getyPlaylistById = async (playlistId, force = false) => {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const getPlaylistById = async (playlistId, force = false) => {
     if (state.playlists[playlistId] && !force) {
       return;
     }
-    let result = await getPlaylist(playlistId);
-  
 
-    let cid, ct;
+    setLoading(true);
 
-    result = result.map((item) => {
-        
-      const {
-        title,
-        description,
-        thumbnails: { medium },
-        channelTitle,
-        channelId,
-      } = item.snippet;
-
-      if (!cid) {
-        cid = channelId;
-      }
-      if (!ct) {
-        ct = channelTitle;
-      }
-
-      return {
-        title,
-        description,
-        thumbnails: medium,
-        channelTitle,
-        channelId,
-        contentDetails: item.contentDetails,
-      };
-    });
-
-    setState((prev) => ({
-      ...prev,
-      playlists: {
-        ...prev.playlists,
-        [playlistId]: {
-          items: result,
-          playlistId: playlistId,
-          channelId: cid,
-          channelTitle: ct,
+    try {
+      const playlist = await getPlaylist(playlistId);
+      console.log(playlist);
+      setError("");
+      setState((prev) => ({
+        ...prev,
+        playlists: {
+          ...prev.playlists,
+          [playlistId]: playlist,
         },
-      },
-    }));
+      }));
+    } catch (e) {
+      setError(e.response?.data?.error?.message || "Something Went Wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const addToFavourite = (playlistId) => {
+  const addToFavorite = (playlistId) => {
     setState((prev) => ({
       ...prev,
-      favourites: [...prev, playlistId],
+      favorites: [...prev, playlistId],
     }));
   };
 
@@ -77,11 +55,13 @@ const usePlaylists = () => {
   };
   return {
     playlists: state.playlists,
-    favourites: getPlaylistByIds(state.favourites),
+    favorites: getPlaylistByIds(state.favorites),
     recentPlaylists: getPlaylistByIds(state.recentPlaylists),
-    getyPlaylistById,
-    addToFavourite,
+    getPlaylistById,
+    addToFavorite,
     addToRecent,
+    error,
+    loading,
   };
 };
 
