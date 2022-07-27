@@ -24,7 +24,7 @@ const PlaylistForm = ({ open, handleClose, getPlaylistId }) => {
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Subscribe</DialogTitle>
+        <DialogTitle>Add To Playlist</DialogTitle>
         <DialogContent>
           <DialogContentText>
             To add a new plylist please insert the playlist id or playlist link.
