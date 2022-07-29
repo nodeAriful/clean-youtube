@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import PlaylistCardItem from "./components/PlaylistCardItem";
 import usePlaylists from "./hooks/usePlaylists";
@@ -20,7 +20,8 @@ const HomePage = ({ playlistArray }) => {
           playlistArray.map((item) => (
             <Grid item xs={12} md={4} lg={4}>
               <PlaylistCardItem
-                key={item.id}
+                key={item.playlistId}
+                playlistId={item.playlistId}
                 channelTitle={item.channelTitle}
                 playlistThumbnail={item.playlistThumbnail}
                 playlistTitle={item.playlistTitle}
@@ -32,17 +33,27 @@ const HomePage = ({ playlistArray }) => {
   );
 };
 
-const PlayerPage = () => (
-  <Container>
-    <Stack
-      sx={{ alignItems: "center", justifyContent: "center", height: "100vh" }}
-    >
-      <Box>
-        <Typography variant="h2">Clean YouTube Player</Typography>
-      </Box>
-    </Stack>
-  </Container>
-);
+const PlayerPage = ({ playlists }) => {
+  const { playlistId } = useParams();
+
+  const current = playlists[playlistId];
+  console.log("Current", playlists[playlistId]);
+
+  if (!current) return;
+
+  return (
+    <Container maxWidth="md">
+      <Stack
+        sx={{ alignItems: "center", justifyContent: "center", height: "100vh" }}
+      >
+        <Box>
+          <Typography variant="h2">{current.playlistTitle}</Typography>
+          <Typography variant="body1">{current.playlistDescription}</Typography>
+        </Box>
+      </Stack>
+    </Container>
+  );
+};
 
 const NotFound = () => (
   <Container>
@@ -67,7 +78,10 @@ const App = () => {
       <Navbar getPlaylistById={getPlaylistById} />
       <Routes>
         <Route path="/" element={<HomePage playlistArray={playlistArray} />} />
-        <Route path="/player" element={<PlayerPage />} />
+        <Route
+          path="/player/:playlistId"
+          element={<PlayerPage playlists={playlists} />}
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

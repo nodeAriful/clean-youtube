@@ -13,6 +13,7 @@ const PlaylistCardItem = ({
   playlistThumbnail,
   playlistTitle,
   channelTitle,
+  playlistId,
 }) => {
   return (
     <Card
@@ -40,7 +41,7 @@ const PlaylistCardItem = ({
       </CardContent>
       <Box sx={{ flexGrow: 1 }}></Box>
       <CardActions disableSpacing>
-        <Button to="/player" component={Link}>
+        <Button to={`/player/${playlistId}`} component={Link}>
           <Stack direction={"row"} spacing={1} alignItems={"center"}>
             <PlayCircleOutline />
             <Typography variant="body2" fontWeight={600}>
