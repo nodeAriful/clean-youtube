@@ -12,5 +12,6 @@ class Storage{
 }
 
 const storage = new Storage();
+const storage2 = new Storage();
 
 export default storage;

@@ -1,7 +1,16 @@
 import { Container, Grid } from "@mui/material";
+import { useStoreActions } from "easy-peasy";
+import { useEffect } from "react";
 import PlaylistCardItem from "../components/PlaylistCardItem";
 
+const playlistID = "PL_XxuZqN0xVDr08QgQHljCecWtA4jBLnS";
+
 const HomePage = ({ playlistArray }) => {
+  const playlist = useStoreActions((actions) => actions.playlist);
+
+  useEffect(() => {
+    playlist.getPlaylistData(playlistID);
+  }, []);
   return (
     <Container maxWidth={"lg"} sx={{ my: 16 }}>
       <Grid container spacing={2} alignItems="stretch">
