@@ -6,17 +6,17 @@ import PlaylistCardItem from "../components/PlaylistCardItem";
 const playlistID = "PL_XxuZqN0xVDr08QgQHljCecWtA4jBLnS";
 
 const HomePage = ({ playlistArray }) => {
-  const playlist = useStoreActions((actions) => actions.playlist);
+  const playlist = useStoreActions((actions) => actions.playlists);
 
   useEffect(() => {
-    playlist.getPlaylistData(playlistID);
+    playlist.getPlaylist(playlistID);
   }, []);
   return (
     <Container maxWidth={"lg"} sx={{ my: 16 }}>
       <Grid container spacing={2} alignItems="stretch">
         {playlistArray.length > 0 &&
           playlistArray.map((item) => (
-            <Grid item xs={12} md={4} lg={4}>
+            <Grid item xs={12} md={4} lg={4} key={item.channelId}>
               <PlaylistCardItem
                 key={item.playlistId}
                 playlistId={item.playlistId}

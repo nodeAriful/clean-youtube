@@ -1,41 +1,41 @@
-import { action, persist, thunk } from 'easy-peasy';
-import getPlaylist from '../api';
+import { action, persist, thunk } from "easy-peasy";
+import getPlaylist from "../api";
 
 const playlistModel = persist({
-  items: [],
-  id:"",
-  title: "",
-  description: "",
-  thumbnail: "",
-  channelId: "",
-  channelTitle: "",
+  data: {},
+  error: "",
+  isLoading: false,
 
-  setPlaylistData : action((state, payload)=>{
-    state = {...payload};
-    return state
+  addPlaylist: action((state, payload) => {
+    state.data[payload.playlistId] = payload;
   }),
 
-  getPlaylistData: thunk(async ({setPlaylistData},payload)=>{
-    const {
-      playlistId,
-      playlistTitle,
-      playlistDescription,
-      playlistThumbnail,
-      channelId,
-      channelTitle,
-      playlistItems,
-    } = await getPlaylist(payload)
- 
-    setPlaylistData({
-      items: playlistItems,
-      id:playlistId,
-      title: playlistTitle,
-      description: playlistDescription,
-      thumbnail: playlistThumbnail,
-      channelId,
-      channelTitle,
-    })
+  setLoading: action((state, payload) => {
+    state.isLoading = payload;
   }),
+
+  setError: action((state, payload) => {
+    state.error = payload;
+  }),
+
+  getPlaylist: thunk(
+    async ({ addPlaylist, setLoading, setError }, playlistId, { getState }) => {
+      if (getState().data[playlistId]) {
+        console.log("API Call Canceled");
+        return;
+      }
+      setLoading(true);
+
+      try {
+        const playlist = await getPlaylist(playlistId);
+        addPlaylist(playlist);
+      } catch (e) {
+        setError(e.response?.data?.error?.message || "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    }
+  ),
 });
 
 export default playlistModel;
